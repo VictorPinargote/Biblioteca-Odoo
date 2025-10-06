@@ -2,7 +2,7 @@
   <data>
     <!-- explicit list view definition -->
 
-    <record model="ir.ui.view" id="view_biblioteca_libro_list">
+    <record model="ir.ui.view" id="biblioteca_libro_list">
       <field name="name">biblioteca libro list</field>
       <field name="model">biblioteca.libro</field>
       <field name="arch" type="xml">
@@ -14,49 +14,68 @@
       </field>
     </record>
 
-    <record model="ir.ui.view" id="view_biblioteca_libro_form">
+    <record model="ir.ui.view" id="biblioteca_libro_form">
       <field name="name">biblioteca libro form</field>
       <field name="model">biblioteca.libro</field>
       <field name="arch" type="xml">
         <form>
-          <group>
-            <field name="firstname"/>
-            <field name="author"/>
-            <field name="value"/>
-            <field name="value2"/>
-            <field name="description"/>
-          </group>
+        <group>
+          <field name="firstname"/>
+          <field name="value"/>
+          <field name="value2"/>
+          <field name="description"/>
+        </group>
         </form>
       </field>
     </record>
 
+    <record model="ir.ui.view" id="biblioteca_autor_list">
+      <field name="name">biblioteca autor list</field>
+      <field name="model">biblioteca.autor</field>
+      <field name="arch" type="xml">
+        <list>
+          <field name="firstname"/>
+          <field name="lastname"/>
+        </list>
+      </field>
+    </record>
 
-    <record model="ir.ui.view" id="view_biblioteca_autor_list">
-        <field name="name">biblioteca autor list</field>
-        <field name="model">biblioteca.autor</field>
-        <field name="arch" type="xml">
-          <list>
-            <group>
-              <field name="firstname"/>
-              <field name="lastname"/>
-            </group>
-          </list>
-        </field>
+    <record model="ir.ui.view" id="biblioteca_autor_form">
+      <field name="name">biblioteca autor form</field>
+      <field name="model">biblioteca.autor</field>
+      <field name="arch" type="xml">
+        <form>
+        <group>
+          <field name="firstname"/>
+          <field name="lastname"/>
+        </group>
+        </form>
+      </field>
+    </record>
+
+   
 
     <!-- actions opening views on models -->
 
     <record model="ir.actions.act_window" id="biblioteca_libro_action_window">
-      <field name="name">biblioteca.libro window</field>
+      <field name="name">biblioteca libro window</field>
       <field name="res_model">biblioteca.libro</field>
+      <field name="view_mode">list,form</field>
+    </record>
+
+    
+    <record model="ir.actions.act_window" id="biblioteca_autor_action_window">
+      <field name="name">biblioteca autor window</field>
+      <field name="res_model">biblioteca.autor</field>
       <field name="view_mode">list,form</field>
     </record>
 
 
     <!-- server action to the one above -->
-
-    <record model="ir.actions.server" id="biblioteca_action_server">
-      <field name="name">biblioteca libro server</field>
-      <field name="model_id" ref="model_biblioteca_libro"/>
+<!--
+    <record model="ir.actions.server" id="biblioteca.action_server">
+      <field name="name">biblioteca server</field>
+      <field name="model_id" ref="model_biblioteca_biblioteca"/>
       <field name="state">code</field>
       <field name="code">
         action = {
@@ -66,14 +85,23 @@
         }
       </field>
     </record>
-
+-->
 
     <!-- Top menu item -->
 
     <menuitem name="Biblioteca" id="biblioteca_menu"/>
 
-    <menuitem name="Libro"
-    <menuitem name="Libro" id="biblioteca_libro_menu" parent="biblioteca.menu_root" action="biblioteca_libro_action_window"/>
+    <menuitem name="Libro menu" 
+    id="biblioteca.libro" 
+    parent="biblioteca.biblioteca_menu"
+    action="biblioteca_libro_action_window"
+    />
+
+    <menuitem name="Autor menu" 
+    id="biblioteca.autor" 
+    parent="biblioteca.biblioteca_menu"
+    action="biblioteca_autor_action_window"
+    />
 
     <!-- menu categories -->
 <!--
@@ -83,9 +111,9 @@
     <!-- actions -->
 <!--
     <menuitem name="List" id="biblioteca.menu_1_list" parent="biblioteca.menu_1"
-              action="biblioteca_libro_action_window"/>
+              action="biblioteca.action_window"/>
     <menuitem name="Server to list" id="biblioteca" parent="biblioteca.menu_2"
-              action="biblioteca_libro_action_window"/>
+              action="biblioteca.action_server"/>
 -->
   </data>
 </odoo>

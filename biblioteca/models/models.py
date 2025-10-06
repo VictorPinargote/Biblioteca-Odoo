@@ -1,25 +1,27 @@
+#-*- coding: utf-8 -*-
+
 from odoo import models, fields, api
 
-class bibliotecaLibro(models.Model):
-     _name = 'biblioteca.libro'
-     _description = 'biblioteca.biblioteca'
-     _rec_name = 'firstname'
-     
-     firstname = fields.Char(string="Nombre libro")
-     author_id = fields.Many2one('biblioteca.autor', string="Autor Libro")
-     value = fields.Integer(string="numero Ejemplares")
-     value2 = fields.Float(compute="_value_pc", store=True, string="Costo")
-     description = fields.Text(string ="Resumen Libro")
 
-     @api.depends('value')
-     def _value_pc(self):
-         for record in self:
-             record.value2 = float(record.value) / 100
-             
-class bibliotecaAutor(models.Model):
-     _name = 'biblioteca.autor'
-     _description = 'biblioteca.autor'
-     
+class biblioteca_libro(models.Model):
+    _name = 'biblioteca.libro'
+    _description = 'biblioteca.biblioteca' 
+    
+    firstname = fields.Char(string="Nombre Libro")
+    autor = fields.Many2one('biblioteca.autor', string='Autor Libro')
+    value = fields.Integer(string='Numero ejemplares')
+    value2 = fields.Float(compute="_value_pc", store=True, string='Costo') #---- Se guarda en la base de datos 
+    description = fields.Text(string='Resumen Libro')
+
+    @api.depends('value')
+    def _value_pc(self):
+        for record in self:
+            record.value2 = float(record.value) / 100
+
+class BibliotecaAutor(models.Model):
+    _name = 'biblioteca.autor'
+    _description = 'biblioteca.autor'
+    
     firstname = fields.Char()
     lastname = fields.Char()
     
