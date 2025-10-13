@@ -19,17 +19,24 @@ Long description of module's purpose
 
     # any module necessary for this one to work correctly
     'depends': ['base'],
-
+    
     # always loaded
     'data': [
         'security/ir.model.access.csv',
         'views/views.xml',
+        #'views/template.xml'
+        'data/sequence.xml'
         #'views/templates.xml',
     ],
     # only loaded in demonstration mode
     #'demo': [
      #   'demo/demo.xml',
     #],
+    'assets': {
+    'web.assets_backend': [
+        'biblioteca/static/src/widgets/openlibrary_search_widget.js',
+    ],
+    },
     'application': True,
     'license': 'AGPL-3'
 }
