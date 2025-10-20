@@ -19,7 +19,7 @@ Long description of module's purpose
 
     # any module necessary for this one to work correctly
     'depends': ['base'],
-
+    
     # always loaded
     'data': [
         'security/ir.model.access.csv',
@@ -32,10 +32,14 @@ Long description of module's purpose
     #'demo': [
      #   'demo/demo.xml',
     #],
+    'assets': {
+    'web.assets_backend': [
+        'biblioteca/static/src/widgets/openlibrary_search_widget.js',
+    ],
+    },
     'application': True,
     'license': 'AGPL-3'
 }
 
 #12.5.0 Nos indica que cambio ha tenido el software, el tercero, son cosas pequeñas tipo errores ortograficos, errores que habia, el segundo es el cambio de la lógica, y el primero es un cambio mucho mas robuzto que cambia toda la estructura.*/
 #Depende de donde este el cambio, se hacen los test, si el tercero lo actualizo nomas, el segundo depende pero no hay que ser muchas pruebas el primero si o si toca hacer pruebas robustas*/
-

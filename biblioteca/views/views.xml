@@ -2,6 +2,7 @@
 <odoo>
   <data>
 
+    <!-- Actions -->
     <record model="ir.actions.act_window" id="biblioteca_libro_action_window">
       <field name="name">Libros</field>
       <field name="res_model">biblioteca.libro</field>
@@ -14,8 +15,14 @@
       <field name="view_mode">list,form</field>
     </record>
 
+    <record model="ir.actions.act_window" id="biblioteca_editorial_action_window">
+      <field name="name">Editoriales</field>
+      <field name="res_model">biblioteca.editorial</field>
+      <field name="view_mode">list,form</field>
+    </record>
+
     <record model="ir.actions.act_window" id="biblioteca_usuario_action_window">
-      <field name="name">Usuarios (Lectores)</field>
+      <field name="name">Usuarios</field>
       <field name="res_model">biblioteca.usuario</field>
       <field name="view_mode">list,form</field>
     </record>
@@ -24,29 +31,24 @@
       <field name="name">Préstamos</field>
       <field name="res_model">biblioteca.prestamo</field>
       <field name="view_mode">list,form</field>
-      <field name="help" type="html">
-        <p class="o_view_nocontent_smiling_face">Crea un nuevo registro de préstamo.</p>
-      </field>
     </record>
 
     <record model="ir.actions.act_window" id="biblioteca_multa_action_window">
       <field name="name">Multas</field>
       <field name="res_model">biblioteca.multa</field>
       <field name="view_mode">list,form</field>
-      <field name="help" type="html">
-        <p class="o_view_nocontent_smiling_face">No hay multas que mostrar.</p>
-      </field>
     </record>
 
+    <!-- Views: Libro -->
     <record model="ir.ui.view" id="biblioteca_libro_list">
       <field name="name">biblioteca.libro.list</field>
       <field name="model">biblioteca.libro</field>
       <field name="arch" type="xml">
         <list>
-          <field name="firstname"/>
+          <field name="titulo"/>
           <field name="autor"/>
-          <field name="value" string="Ejemplares"/>
-          <field name="available" widget="badge" decoration-success="available == True" decoration-danger="available == False"/>
+          <field name="ejemplares"/>
+          <field name="isbn"/>
         </list>
       </field>
     </record>
@@ -55,40 +57,46 @@
       <field name="name">biblioteca.libro.form</field>
       <field name="model">biblioteca.libro</field>
       <field name="arch" type="xml">
-        <form>
+        <form string="Libro">
+          <header>
+            <button name="action_buscar_openlibrary" type="object" string="Buscar en OpenLibrary" class="oe_highlight"/>
+          </header>
+          <sheet>
             <group>
-              <group>
-                <field name="firstname"/>
-                <field name="autor"/>
-                <field name="value"/>
-              </group>
-              <group>
-                <field name="available" readonly="1"/>
-                <field name="value2" readonly="1" string="Costo de Referencia"/>
-              </group>
+              <field name="firstname"/>
+              <field name="titulo"/>
+              <field name="autor"/>
+              <field name="editorial"/>
+              <field name="genero"/>
+              <field name="isbn"/>
+              <field name="ejemplares"/>
+              <field name="costo"/>
             </group>
-            <field name="description"/>
+            <group>
+              <field name="description"/>
+              <field name="fecha_publicacion"/>
+              <field name="paginas"/>
+              <field name="ubicacion"/>
+            </group>
             <notebook>
-                <page string="Historial de Préstamos">
-                    <field name="prestamo_ids" readonly="1">
-                        <list>
-                            <field name="name" reandoly ="estado in ('p','d','m')" nolabel="1"/>
-                            <field name="fecha_prestamo" reandoly ="estado in ('p','d','m')"/>
-                            <field name="fecha_devolucion" reandoly ="estado in ('p','d','m')" required="estado in ('p','m')"/>
-                            <field name="libro_id" reandoly ="estado in ('p','d','m')"/>
-                            <field name="usuario_id" reandoly ="estado in ('p','d','m')"/>
-                            <field name="multa_bol" reandoly ="estado in ('p','d','m')"/>
-                            <field name="multa" reandoly ="estado in ('p','d','m')" invisible= "multa_bol == False" />
-                            <field name="fecha_maxima" reandoly ="estado in ('p','d','m')"/>
-                            <field name="usuario" reandoly ="estado in ('p','d','m')"/>
-                        </list>
-                    </field>
-                </page>
+              <page string="Historial de Préstamos">
+                <field name="prestamo_ids">
+                  <list>
+                    <field name="name"/>
+                    <field name="fecha_prestamo"/>
+                    <field name="fecha_devolucion"/>
+                    <field name="usuario_id"/>
+                    <field name="estado"/>
+                  </list>
+                </field>
+              </page>
             </notebook>
+          </sheet>
         </form>
       </field>
     </record>
-    
+
+    <!-- Views: Autor -->
     <record model="ir.ui.view" id="biblioteca_autor_list">
       <field name="name">biblioteca.autor.list</field>
       <field name="model">biblioteca.autor</field>
@@ -105,43 +113,219 @@
       <field name="model">biblioteca.autor</field>
       <field name="arch" type="xml">
         <form>
+          <sheet>
+            <group>
+              <field name="firstname"/>
+              <field name="lastname"/>
+              <field name="nacimiento"/>
+              <field name="libro_ids"/>
+            </group>
+          </sheet>
         </form>
       </field>
     </record>
 
-    <record model="ir.ui.view" id="biblioteca_usuario_list">
-      <field name="name">biblioteca.usuario.list</field>
-      <field name="model">biblioteca.usuario</field>
+    <!-- Views: Editorial -->
+    <record model="ir.ui.view" id="biblioteca_editorial_list">
+      <field name="name">biblioteca.editorial.list</field>
+      <field name="model">biblioteca.editorial</field>
       <field name="arch" type="xml">
         <list>
           <field name="name"/>
-          <field name="email"/>
-          <field name="phone"/>
-          <field name="multa_pendiente_count" string="Multas"/>
+          <field name="pais"/>
         </list>
       </field>
     </record>
 
-    <record model="ir.ui.view" id="biblioteca_usuario_form">
-      <field name="name">biblioteca.usuario.form</field>
-      <field name="model">biblioteca.usuario</field>
+    <record model="ir.ui.view" id="biblioteca_editorial_form">
+      <field name="name">biblioteca.editorial.form</field>
+      <field name="model">biblioteca.editorial</field>
       <field name="arch" type="xml">
         <form>
+          <sheet>
+            <group>
+              <field name="name"/>
+              <field name="pais"/>
+              <field name="ciudad"/>
+            </group>
+          </sheet>
         </form>
       </field>
     </record>
 
+<!-- Views: Usuario -->
+<record model="ir.ui.view" id="biblioteca_usuario_list">
+  <field name="name">biblioteca.usuario.list</field>
+  <field name="model">biblioteca.usuario</field>
+  <field name="arch" type="xml">
+    <list>
+      <field name="name"/>
+      <field name="cedula"/>
+      <field name="email"/>
+      <field name="phone"/>
+      <field name="prestamo_count"/>
+      <field name="multa_pendiente_count" decoration-danger="multa_pendiente_count > 0"/>
+    </list>
+  </field>
+</record>
+
+<record model="ir.ui.view" id="biblioteca_usuario_form">
+  <field name="name">biblioteca.usuario.form</field>
+  <field name="model">biblioteca.usuario</field>
+  <field name="arch" type="xml">
+    <form>
+      <sheet>
+        <div class="oe_button_box" name="button_box">
+          <button class="oe_stat_button" type="object" name="abrir_prestamos" icon="fa-book">
+            <field name="prestamo_count" widget="statinfo" string="Préstamos"/>
+          </button>
+          <button class="oe_stat_button" type="object" name="abrir_multas" icon="fa-exclamation-triangle" invisible="multa_pendiente_count == 0">
+            <field name="multa_pendiente_count" widget="statinfo" string="Multas Pendientes"/>
+          </button>
+        </div>
+        <group>
+          <group>
+            <field name="name" placeholder="Ingrese nombre completo"/>
+            <field name="cedula" placeholder="Ej: 1712345678" help="Debe tener 10 dígitos. Los primeros 2 representan la provincia (01-24)"/>
+            <label for="cedula" string="Cédula"/>
+            <div class="alert alert-info" role="alert" style="margin-bottom: 10px;">
+              <i class="fa fa-info-circle"/> La cédula debe tener 10 dígitos numéricos. 
+              Los primeros 2 dígitos representan la provincia ecuatoriana (01-24).
+            </div>
+          </group>
+          <group>
+            <field name="phone" placeholder="+593 99 999 9999"/>
+            <field name="email" placeholder="correo@ejemplo.com"/>
+          </group>
+        </group>
+        <notebook>
+          <page string="Préstamos" decoration-info="True">
+            <field name="prestamo_ids">
+              <list>
+                <field name="name"/>
+                <field name="libro_id"/>
+                <field name="fecha_prestamo"/>
+                <field name="fecha_maxima"/>
+                <field name="estado" decoration-warning="estado == 'm'" decoration-success="estado == 'd'" decoration-info="estado == 'p'"/>
+              </list>
+            </field>
+          </page>
+          <page string="Multas">
+            <field name="multa_ids">
+              <list>
+                <field name="name"/>
+                <field name="prestamo_id"/>
+                <field name="monto" widget="monetary"/>
+                <field name="dias_retraso"/>
+                <field name="state" decoration-danger="state == 'pendiente'" decoration-success="state == 'pagada'"/>
+              </list>
+            </field>
+          </page>
+        </notebook>
+      </sheet>
+    </form>
+  </field>
+</record>
+
+<!-- Views: Multa -->
+<record model="ir.ui.view" id="biblioteca_multa_list">
+  <field name="name">biblioteca.multa.list</field>
+  <field name="model">biblioteca.multa</field>
+  <field name="arch" type="xml">
+    <list decoration-danger="state == 'pendiente'" 
+          decoration-success="state == 'pagada'"
+          decoration-muted="state == 'cancelada'">
+      <field name="name"/>
+      <field name="usuario_id"/>
+      <field name="prestamo_id"/>
+      <field name="monto" widget="monetary"/>
+      <field name="dias_retraso" decoration-danger="dias_retraso > 7"/>
+      <field name="fecha_vencimiento" 
+             decoration-danger="fecha_vencimiento &lt; context_today() and state == 'pendiente'"/>
+      <field name="state" widget="badge" 
+             decoration-danger="state == 'pendiente'" 
+             decoration-success="state == 'pagada'"
+             decoration-muted="state == 'cancelada'"/>
+    </list>
+  </field>
+</record>
+
+<record model="ir.ui.view" id="biblioteca_multa_form">
+  <field name="name">biblioteca.multa.form</field>
+  <field name="model">biblioteca.multa</field>
+  <field name="arch" type="xml">
+    <form>
+      <header>
+        <button name="action_pagar" type="object" string="💳 Registrar Pago" 
+                class="btn-success" invisible="state in ['pagada','cancelada']"
+                confirm="¿Confirmar el pago de esta multa?"/>
+        <field name="state" widget="statusbar" statusbar_visible="pendiente,pagada"
+               statusbar_colors='{"pendiente":"red","pagada":"green","cancelada":"gray"}'/>
+      </header>
+      
+      <sheet>
+        <!-- Alertas visuales -->
+        <div class="alert alert-danger" role="alert" 
+             invisible="state != 'pendiente'">
+          <i class="fa fa-exclamation-circle"/> 
+          <strong>¡Multa pendiente de pago!</strong>
+          Vence el <field name="fecha_vencimiento" readonly="1"/>
+        </div>
+        
+        <div class="alert alert-success" role="alert" 
+             invisible="state != 'pagada'">
+          <i class="fa fa-check-circle"/> 
+          <strong>Multa pagada</strong> - Gracias por su pago.
+        </div>
+        
+        <div class="oe_button_box" name="button_box">
+          <button class="oe_stat_button" type="object" icon="fa-clock-o" 
+                  style="color: #d9534f;">
+            <div class="o_field_widget o_stat_info">
+              <span class="o_stat_value">
+                <field name="dias_retraso"/>
+              </span>
+              <span class="o_stat_text">Días de Retraso</span>
+            </div>
+          </button>
+        </div>
+        
+        <group>
+          <group>
+            <field name="name" readonly="1"/>
+            <field name="usuario_id" readonly="1"/>
+            <field name="prestamo_id" readonly="1"/>
+          </group>
+          <group>
+            <field name="monto" readonly="1" widget="monetary"/>
+            <field name="dias_retraso" readonly="1"/>
+            <field name="fecha_vencimiento" readonly="1"/>
+          </group>
+        </group>
+        
+        <div class="alert alert-info" role="alert" style="margin-top: 20px;">
+          <i class="fa fa-info-circle"/> 
+          <strong>Información:</strong> Esta multa se generó automáticamente por 
+          <field name="dias_retraso" readonly="1"/> días de retraso en la devolución del libro.
+          Tarifa: $1.00 USD por día.
+        </div>
+      </sheet>
+    </form>
+  </field>
+</record>
+
+    <!-- Views: Prestamo -->
     <record model="ir.ui.view" id="biblioteca_prestamo_list">
       <field name="name">biblioteca.prestamo.list</field>
       <field name="model">biblioteca.prestamo</field>
       <field name="arch" type="xml">
-        <list default_order="fecha_prestamo desc">
+        <list>
           <field name="name"/>
           <field name="libro_id"/>
           <field name="usuario_id"/>
           <field name="fecha_prestamo"/>
           <field name="fecha_devolucion"/>
-          <field name="state" widget="badge" decoration-danger="state == 'prestado' and fecha_devolucion &lt; current_date" decoration-info="state == 'prestado'"/>
+          <field name="estado"/>
         </list>
       </field>
     </record>
@@ -150,17 +334,28 @@
       <field name="name">biblioteca.prestamo.form</field>
       <field name="model">biblioteca.prestamo</field>
       <field name="arch" type="xml">
-        <form>
-        <header>
-            <button name="action_devolver" type="object" string="Registrar Devolución" 
-                    invisible="state in ['devuelto', 'cancelado']" 
-                    class="oe_highlight"/>
-            <field name="state" widget="statusbar" statusbar_visible="prestado,devuelto"/>
-        </header>
+        <form string="Préstamo">
+          <header>
+            <button name="generar_prestamo" type="object" string="Prestar" class="btn-primary" invisible="estado in ['p','d','m']"/>
+            <field name="estado" widget="statusbar"/>
+          </header>
+          <sheet>
+            <group>
+              <field name="name"/>
+              <field name="fecha_prestamo"/>
+              <field name="fecha_devolucion"/>
+              <field name="libro_id"/>
+              <field name="usuario_id"/>
+              <field name="multa_bol"/>
+              <field name="multa"/>
+              <field name="fecha_maxima"/>
+            </group>
+          </sheet>
         </form>
       </field>
     </record>
 
+    <!-- Views: Multa -->
     <record model="ir.ui.view" id="biblioteca_multa_list">
       <field name="name">biblioteca.multa.list</field>
       <field name="model">biblioteca.multa</field>
@@ -171,7 +366,7 @@
           <field name="prestamo_id"/>
           <field name="monto"/>
           <field name="dias_retraso"/>
-          <field name="state" widget="badge" decoration-danger="state == 'pendiente'" decoration-success="state == 'pagada'"/>
+          <field name="state"/>
         </list>
       </field>
     </record>
@@ -181,26 +376,37 @@
       <field name="model">biblioteca.multa</field>
       <field name="arch" type="xml">
         <form>
-        <header>
-            <button name="action_pagar" type="object" string="Registrar Pago" 
-                    invisible="state in ['pagada', 'cancelada']"
-                    class="oe_highlight"/>
-            <field name="state" widget="statusbar" statusbar_visible="pendiente,pagada"/>
-        </header>
+          <header>
+            <button name="action_pagar" type="object" string="Registrar Pago" class="oe_highlight" invisible="state in ['pagada','cancelada']"/>
+            <field name="state" widget="statusbar"/>
+          </header>
+          <sheet>
+            <group>
+              <field name="name"/>
+              <field name="usuario_id"/>
+              <field name="prestamo_id"/>
+              <field name="monto"/>
+              <field name="dias_retraso"/>
+              <field name="fecha_vencimiento"/>
+            </group>
+          </sheet>
         </form>
       </field>
     </record>
 
+    <!-- Menús -->
     <menuitem name="Biblioteca" id="biblioteca_menu" sequence="10"/>
     <menuitem name="Catálogo" id="biblioteca_menu_catalogo" parent="biblioteca_menu" sequence="10"/>
     <menuitem name="Gestión de Préstamos" id="biblioteca_menu_gestion" parent="biblioteca_menu" sequence="20"/>
 
-    <menuitem name="Libros" id="biblioteca.libro" parent="biblioteca_menu_catalogo" action="biblioteca_libro_action_window" sequence="10"/>
-    <menuitem name="Autores" id="biblioteca.autor" parent="biblioteca_menu_catalogo" action="biblioteca_autor_action_window" sequence="20"/>
-    <menuitem name="Usuarios" id="biblioteca.usuario" parent="biblioteca_menu_gestion" action="biblioteca_usuario_action_window" sequence="10"/>
-    <menuitem name="Préstamos" id="biblioteca.prestamo" parent="biblioteca_menu_gestion" action="biblioteca_prestamo_action_window" sequence="20"/>
-    <menuitem name="Multas" id="biblioteca.multa" parent="biblioteca_menu_gestion" action="biblioteca_multa_action_window" sequence="30"/>
+    <menuitem name="Libros" id="biblioteca.menu_libros" parent="biblioteca_menu_catalogo" action="biblioteca_libro_action_window" sequence="10"/>
+    <menuitem name="Autores" id="biblioteca.menu_autores" parent="biblioteca_menu_catalogo" action="biblioteca_autor_action_window" sequence="20"/>
+    <menuitem name="Editoriales" id="biblioteca.menu_editoriales" parent="biblioteca_menu_catalogo" action="biblioteca_editorial_action_window" sequence="30"/>
+    <menuitem name="Usuarios" id="biblioteca.menu_usuarios" parent="biblioteca_menu_gestion" action="biblioteca_usuario_action_window" sequence="10"/>
+    <menuitem name="Préstamos" id="biblioteca.menu_prestamos" parent="biblioteca_menu_gestion" action="biblioteca_prestamo_action_window" sequence="20"/>
+    <menuitem name="Multas" id="biblioteca.menu_multas" parent="biblioteca_menu_gestion" action="biblioteca_multa_action_window" sequence="30"/>
 
+    <!-- Secuencias -->
     <record id="seq_biblioteca_prestamo" model="ir.sequence">
         <field name="name">Referencia de Préstamo</field>
         <field name="code">biblioteca.prestamo</field>
