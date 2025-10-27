@@ -1,13 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?>
 <odoo>
-    <data>
-        <record id = "cron_prestamos_multas" model ="ir.cron">
-            <field name = "name">Acción para multas de prestamos </field>
-            <field name = "interval_number">1</field>  
-            <field name = "interval_type">minutes</field> <!--Cada cuanto se ejecuta-->
-            <field name = "nextcall">2025-10-22 09:20:00</field> <!--Cuando inicia el script-->
-            <field name = "model_id" ref="biblioteca.model_biblioteca_prestamo"/><!--nombre del modulo.model y el nombre objeto del modulo con_-->
-            <field name = "code">model._cron_multas</field> <!--en model va el nombre de la funcion que creamos-->
-            <field name = "state">code</field>
-        </record>
-    </data>
+    <record id="cron_verificar_prestamos_vencidos" model="ir.cron">
+        <field name="name">Verificar Préstamos Vencidos</field>
+        <field name="model_id" ref="model_biblioteca_prestamo"/>
+        <field name="state">code</field>
+        <field name="code">model._cron_verificar_prestamos_vencidos()</field>
+        <field name="interval_number">1</field>
+        <field name="interval_type">days</field>
+        <field name="active" eval="True"/>
+    </record>
 </odoo>
