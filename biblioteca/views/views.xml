@@ -267,7 +267,7 @@
       </field>
     </record>
 
-<!-- Vista Formulario de Usuario del Sistema - ACTUALIZADO -->
+    <!-- Vista Formulario de Usuario del Sistema -->
     <record model="ir.ui.view" id="biblioteca_usuario_sistema_form">
       <field name="name">biblioteca.usuario.sistema.form</field>
       <field name="model">biblioteca.usuario.sistema</field>
@@ -290,14 +290,6 @@
                     invisible="user_id"
                     help="Requiere contraseña maestra. Crea un administrador con control total"/>
             
-            <!-- ✅ NUEVO: Botón para arreglar usuarios ya creados -->
-            <button name="action_arreglar_usuario" 
-                    type="object" 
-                    string="🔧 Arreglar Permisos" 
-                    class="btn-info"
-                    invisible="not user_id"
-                    help="Arregla los permisos de este usuario para que pueda iniciar sesión"/>
-            
             <!-- Badge de estado -->
             <field name="es_administrador" widget="badge" 
                    decoration-danger="es_administrador == True"
@@ -306,20 +298,12 @@
           </header>
           
           <sheet>
-            <!-- ✅ NUEVA Alerta de advertencia si ya fue creado -->
-            <div class="alert alert-warning" role="alert" invisible="not user_id">
-              <strong>⚠️ Usuario Ya Creado</strong>
-              <p style="margin-top: 5px;">
-                Este usuario ya existe en Odoo. Si no puede iniciar sesión, 
-                haga clic en el botón <strong>"🔧 Arreglar Permisos"</strong> arriba.
-              </p>
-            </div>
-
-            <!-- Alerta de éxito -->
+            <!-- Alerta si ya fue creado -->
             <div class="alert alert-success" role="alert" invisible="not user_id">
-              <strong>✅ Usuario en el Sistema</strong>
+              <strong>✅ Usuario Creado Exitosamente</strong>
               <p style="margin-top: 5px;">
-                Login: <strong><field name="login" readonly="1" nolabel="1"/></strong>
+                El usuario ha sido creado en el sistema. 
+                Puede iniciar sesión con el login: <strong><field name="login" readonly="1" nolabel="1"/></strong>
               </p>
             </div>
 
@@ -335,13 +319,13 @@
               </group>
             </group>
 
-            <!-- Sección de Contraseña de Administrador -->
+            <!-- Sección de Contraseña de Administrador (solo visible al crear admin) -->
             <group string="🔐 Contraseña de Administrador" invisible="user_id">
               <div class="alert alert-warning" role="alert">
                 <p><strong>⚠️ Importante:</strong></p>
                 <ul style="margin: 10px 0; padding-left: 20px;">
-                  <li>Para crear un <strong>Usuario Normal</strong>: Haga clic en "👤 Crear Usuario Normal" (no requiere contraseña maestra)</li>
-                  <li>Para crear un <strong>Administrador</strong>: Ingrese la contraseña maestra abajo y haga clic en "🔐 Crear Administrador"</li>
+                  <li>Para crear un <strong>Usuario Normal</strong>: Haga clic en "Crear Usuario Normal" (no requiere contraseña maestra)</li>
+                  <li>Para crear un <strong>Administrador</strong>: Ingrese la contraseña maestra abajo y haga clic en "Crear Administrador"</li>
                 </ul>
               </div>
               <field name="contrasena_admin" 
