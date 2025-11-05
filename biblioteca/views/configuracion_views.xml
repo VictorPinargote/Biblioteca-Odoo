@@ -1,0 +1,210 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <record model="ir.actions.act_window" id="biblioteca_configuracion_action_window">
+        <field name="name">Configuración de Multas</field>
+        <field name="res_model">biblioteca.configuracion</field>
+        <field name="view_mode">form</field>
+    </record>
+
+    <!-- Formulario de Configuración -->
+    <record model="ir.ui.view" id="biblioteca_configuracion_form">
+        <field name="name">biblioteca.configuracion.form</field>
+        <field name="model">biblioteca.configuracion</field>
+        <field name="arch" type="xml">
+            <form string="Configuración">
+                <sheet>
+                    <!-- Título Principal -->
+                    <div class="oe_title">
+                        <h1>
+                            <field name="name" readonly="1" class="oe_inline"/>
+                        </h1>
+                    </div>
+
+                    <!-- Alerta de permisos -->
+                    <div class="alert alert-warning" role="alert" groups="biblioteca.group_biblioteca_usuario">
+                        <strong>⚠️ Solo Lectura:</strong> Solo los administradores pueden modificar esta configuración.
+                    </div>
+
+                    <!-- Configuración General -->
+                    <group string="⚙️ Configuración General del Sistema">
+                        <group>
+                            <field name="email_biblioteca" 
+                                   placeholder="biblioteca@ejemplo.com"
+                                   help="Correo desde el cual se enviarán las notificaciones"
+                                   groups="biblioteca.group_biblioteca_administrador"/>
+                            <field name="email_biblioteca" 
+                                   placeholder="biblioteca@ejemplo.com"
+                                   help="Correo desde el cual se enviarán las notificaciones"
+                                   groups="biblioteca.group_biblioteca_usuario"
+                                   readonly="1"/>
+                        </group>
+                    </group>
+
+                    <separator string="📅 Configuración de Préstamos"/>
+                    
+                    <group>
+                        <group>
+                            <field name="dias_prestamo" 
+                                   help="Días que el usuario tiene para devolver un libro"
+                                   groups="biblioteca.group_biblioteca_administrador"/>
+                            <field name="dias_prestamo" 
+                                   help="Días que el usuario tiene para devolver un libro"
+                                   groups="biblioteca.group_biblioteca_usuario"
+                                   readonly="1"/>
+                        </group>
+                        <group>
+                            <field name="dias_gracia_notificacion" 
+                                   help="Días de espera después del vencimiento antes de generar multa y enviar correo"
+                                   groups="biblioteca.group_biblioteca_administrador"/>
+                            <field name="dias_gracia_notificacion" 
+                                   help="Días de espera después del vencimiento antes de generar multa y enviar correo"
+                                   groups="biblioteca.group_biblioteca_usuario"
+                                   readonly="1"/>
+                        </group>
+                    </group>
+
+                    <!-- Información sobre el cron job -->
+                    <group>
+                        <div class="alert alert-info" role="alert">
+                            <strong>ℹ️ Sistema Automático de Multas:</strong>
+                            <p style="margin-top: 10px;">
+                                El sistema verifica automáticamente los préstamos vencidos cada hora 
+                                (configurable en Configuración → Acciones Programadas → "Verificar Préstamos Vencidos").
+                            </p>
+                            <p>
+                                Cuando un préstamo supera la fecha máxima de devolución + días de gracia:
+                            </p>
+                            <ul>
+                                <li>✅ Se crea automáticamente una multa en la base de datos</li>
+                                <li>📧 Se envía un correo al lector notificando la multa</li>
+                                <li>🔄 El préstamo cambia a estado "Con Multa"</li>
+                                <li>📊 La multa se actualiza si el retraso aumenta</li>
+                            </ul>
+                        </div>
+                    </group>
+
+                    <separator string="💰 Montos de Multas"/>
+                    
+                    <!-- Multas por Retraso -->
+                    <group string="📅 Por Retraso en Devolución">
+                        <field name="monto_multa_dia" 
+                               widget="monetary"
+                               help="Monto que se cobra por cada día de retraso"
+                               groups="biblioteca.group_biblioteca_administrador"/>
+                        <field name="monto_multa_dia" 
+                               widget="monetary"
+                               help="Monto que se cobra por cada día de retraso"
+                               groups="biblioteca.group_biblioteca_usuario"
+                               readonly="1"/>
+                        <div class="alert alert-success" role="alert" colspan="2">
+                            <strong>Ejemplo:</strong> Si el monto es $1.00 y hay 5 días de retraso, 
+                            la multa será de $5.00 (se calcula automáticamente).
+                        </div>
+                    </group>
+
+                    <!-- Multas por Condición del Libro -->
+                    <group string="📚 Por Condición del Libro al Devolver">
+                        <group>
+                            <field name="monto_multa_dano_leve" 
+                                   widget="monetary"
+                                   help="Páginas dobladas, rayones menores, cubiertas rayadas"
+                                   groups="biblioteca.group_biblioteca_administrador"/>
+                            <field name="monto_multa_dano_leve" 
+                                   widget="monetary"
+                                   help="Páginas dobladas, rayones menores, cubiertas rayadas"
+                                   groups="biblioteca.group_biblioteca_usuario"
+                                   readonly="1"/>
+                            <field name="monto_multa_dano_grave" 
+                                   widget="monetary"
+                                   help="Páginas arrancadas, manchas de líquidos, daño estructural"
+                                   groups="biblioteca.group_biblioteca_administrador"/>
+                            <field name="monto_multa_dano_grave" 
+                                   widget="monetary"
+                                   help="Páginas arrancadas, manchas de líquidos, daño estructural"
+                                   groups="biblioteca.group_biblioteca_usuario"
+                                   readonly="1"/>
+                        </group>
+                        <group>
+                            <field name="monto_multa_perdida" 
+                                   widget="monetary"
+                                   help="Cuando el libro se pierde completamente"
+                                   groups="biblioteca.group_biblioteca_administrador"/>
+                            <field name="monto_multa_perdida" 
+                                   widget="monetary"
+                                   help="Cuando el libro se pierde completamente"
+                                   groups="biblioteca.group_biblioteca_usuario"
+                                   readonly="1"/>
+                        </group>
+                    </group>
+
+                    <!-- Información Detallada -->
+                    <group>
+                        <div class="alert alert-warning" role="alert">
+                            <strong>⚠️ Importante - Cómo Funciona el Sistema:</strong>
+                            <br/><br/>
+                            <strong>1. Multas por Retraso (Automáticas):</strong>
+                            <ul>
+                                <li>Se generan automáticamente cuando el préstamo está vencido</li>
+                                <li>El sistema verifica cada hora los préstamos vencidos</li>
+                                <li>Se cobra por día según configuración</li>
+                                <li>Se actualiza automáticamente si el retraso aumenta</li>
+                                <li>Se envía correo automático al lector</li>
+                            </ul>
+                            <br/>
+                            <strong>2. Multas por Condición del Libro (Manuales):</strong>
+                            <ul>
+                                <li><strong>Buen Estado:</strong> No genera multa adicional</li>
+                                <li><strong>Daño Leve:</strong> Páginas dobladas, cubiertas rayadas</li>
+                                <li><strong>Daño Grave:</strong> Páginas arrancadas, líquidos → Se reduce 1 copia del inventario</li>
+                                <li><strong>Perdido:</strong> Libro perdido → Se reduce 1 copia del inventario</li>
+                            </ul>
+                            <br/>
+                            <strong>3. Multas Combinadas:</strong>
+                            <p style="margin-top: 5px;">
+                                Si un libro se devuelve tarde Y con daños, ambas multas se suman automáticamente.
+                            </p>
+                        </div>
+                    </group>
+
+                    <!-- Información sobre permisos -->
+                    <group groups="biblioteca.group_biblioteca_administrador">
+                        <div class="alert alert-success" role="alert">
+                            <strong>🔐 Permisos de Administrador:</strong>
+                            <p style="margin-top: 10px;">
+                                Como administrador, tienes acceso completo al sistema:
+                            </p>
+                            <ul>
+                                <li>✅ Modificar toda la configuración de multas</li>
+                                <li>✅ Gestionar préstamos y devoluciones</li>
+                                <li>✅ Crear nuevos usuarios del sistema</li>
+                                <li>✅ Acceder al cron job de verificación</li>
+                                <li>✅ Ver todos los préstamos y multas del sistema</li>
+                            </ul>
+                        </div>
+                    </group>
+
+                    <!-- Notas Finales -->
+                    <group>
+                        <div class="alert alert-info" role="alert">
+                            <strong>📌 Notas Importantes:</strong>
+                            <ul>
+                                <li>Las multas automáticas se crean en la sección "Multas" del menú</li>
+                                <li>Los correos se envían automáticamente usando el servidor de correo configurado</li>
+                                <li groups="biblioteca.group_biblioteca_administrador">Para verificar el estado del cron job, vaya a: 
+                                    <br/><em>Configuración → Técnico → Automatización → Acciones Programadas</em></li>
+                                <li groups="biblioteca.group_biblioteca_administrador">Puede ejecutar manualmente el cron desde la lista de acciones programadas</li>
+                                <li groups="biblioteca.group_biblioteca_usuario">Si tiene dudas sobre la configuración, consulte con un administrador</li>
+                            </ul>
+                        </div>
+                    </group>
+                </sheet>
+            </form>
+        </field>
+    </record>
+
+    <menuitem name="Configuración" 
+              id="biblioteca.menu_configuracion" 
+              parent="biblioteca_menu" 
+              action="biblioteca_configuracion_action_window" 
+              sequence="100"/>
+</odoo>

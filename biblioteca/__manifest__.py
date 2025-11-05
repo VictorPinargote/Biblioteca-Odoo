@@ -2,19 +2,19 @@
 {
     'name': "biblioteca",
 
-    'summary': "Short (1 phrase/line) summary of the module's purpose",
+    'summary': "manejo de bliblioteca",
 
     'description': """
 Long description of module's purpose
     """,
 
-    'author': "My Company",
+    'author': "Joel Pinargote",
     'website': "https://www.yourcompany.com",
 
     # Categories can be used to filter modules in modules listing
     # Check https://github.com/odoo/odoo/blob/15.0/odoo/addons/base/data/ir_module_category_data.xml
     # for the full list
-    'category': 'Uncategorized',
+    'category': 'biblioteca',
     'version': '0.1',
 
     # any module necessary for this one to work correctly
@@ -25,10 +25,13 @@ Long description of module's purpose
         # 'security/ir.model.access.csv',
         'views/views.xml',
         'views/templates.xml',
+        'views/wizard_views.xml',
     ],
     # only loaded in demonstration mode
     'demo': [
         'demo/demo.xml',
     ],
+    #hacele saber al odoo que es una aplicacion
+    'aplication': True,
+    'license': 'LGPL-3',
 }
-
